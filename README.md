@@ -23,7 +23,7 @@ This version should be run using nop(No Operation).
 ## **yet to be Done**
 ### Version-4
 
-Updated Version of 3 with Data and Control Hazard Units. (There will be no need for a nop here)
+Updated Version 3 with Data and Control Hazard Units. (There will be no need for a nop here)
 
 #### Upcoming Versions
 
