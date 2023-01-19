@@ -1,6 +1,6 @@
 # RISCV-Core
 
-My very first riscv core
+My very first RISC-V core
 
 ## Version-1
 
@@ -15,5 +15,5 @@ This core does not support Syscall and Fence Instructions.
 
 ## Version-3
 
-This version has memory outside the core and has byte addressable memory.\
-This core does not support Syscall and Fence Instructions.
+In This Version 5-Stages have been implementated without Data and Control Hazard Units.
+This version should be run using nop(No Operation).
