@@ -1,4 +1,4 @@
-# RISCV-Core
+# YARC - Yet Another RISC-V Core
 
 My very first RISC-V core
 
