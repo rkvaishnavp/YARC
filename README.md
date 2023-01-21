@@ -17,6 +17,7 @@ This core does not support Syscall and Fence Instructions.
 
 In This Version 5-Stages have been implementated without Data and Control Hazard Units.
 This version should be run using nop(No Operation).
+Below is Block Diagram of Version-3
 
 ![alt text](https://github.com/itsmerkvp/riscv-core/blob/main/version-3/draw.io/riscv_5_stage.jpg?raw=true)
 
