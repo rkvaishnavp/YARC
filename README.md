@@ -19,7 +19,7 @@ In This Version 5-Stages have been implementated without Data and Control Hazard
 This version should be run using nop(No Operation).
 Below is Block Diagram of Version-3
 
-![alt text](https://github.com/itsmerkvp/riscv-core/blob/main/version-3/draw.io/riscv_5_stage.jpg?raw=true)
+![alt text](https://github.com/itsmerkvp/riscv-core/blob/main/Pipelined/old_core/draw.io/riscv_5_stage.jpg?raw=true)
 
 ## **yet to be Done**
 ### Version-4
