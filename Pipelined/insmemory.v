@@ -19,8 +19,29 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+module insmemory(
+input clk,
+input rst,
 
-module insmmeory(
+input insmem_en,
+input[31:0] pc_out,
 
-    );
+output reg [31:0] instruction
+);
+
+reg [31:0]insmemory[0:11];
+
+always @(posedge clk ) begin
+    if(!rst) begin
+        if(insmem_en) begin
+            instruction = insmemory[pc_out];
+        end
+    end
+    else begin
+        for(integer i=0;i<12;i=i+1) begin
+            insmemory[i] = 0;
+        end
+    end
+end
+
 endmodule

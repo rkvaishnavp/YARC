@@ -30,7 +30,7 @@ forwarding forwarding();
 exeunit exeunit();
 registers registers();
 immmaker immmaker();
-insmmeory insmemory();
+insmemory insmemory();
 datamemory datamemory();
 
 endmodule

@@ -19,28 +19,41 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module registers (instruction, clk, wdata, waddr, rs1data, rs2data);
-    
-    input [31:0] instruction;
-    input [4:0] waddr;
-    input clk;
-    input [31:0] wdata;
-    output[31:0] rs1data, rs2data;
+module registers (
+input clk,
+input rst,
 
-    wire[4:0] rs1addr, rs2addr;
-    assign rs1addr = instruction[19:15];
-    assign rs2addr = instruction[24:20];
+input [31:0] instruction,
 
-    reg [31:0]registers[0:4];
-    always @(posedge clk ) begin
-        
-        if(wen) begin
-            wdata <= registers[waddr];
+input [4:0] waddr,
+input [31:0] wdata,
+
+input registers_wen,
+
+output[31:0] rs1data,
+output[31:0] rs2data
+);
+
+wire[4:0] rs1addr, rs2addr;
+assign rs1addr = instruction[19:15];
+assign rs2addr = instruction[24:20];
+
+reg [31:0]registers[0:4];
+
+assign rs1data = registers[rs1addr];
+assign rs2data = registers[rs2addr];
+
+always @(posedge clk ) begin
+    if(!rst) begin
+        if(registers_wen) begin
+            registers[waddr] <= wdata;
         end
-        
-        rs1data <= registers[rs1addr];
-        rs2data <= registers[rs2addr];
-
     end
-    
+    else begin
+        for(integer i=0;i<32;i=i+1) begin
+            registers[i] = 0;
+        end
+    end
+end
+
 endmodule
