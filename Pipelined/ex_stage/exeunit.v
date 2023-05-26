@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 04/02/2023 11:27:55 PM
+// Create Date: 05/24/2023 03:52:26 AM
 // Design Name: 
 // Module Name: exeunit
 // Project Name: 
@@ -19,25 +19,21 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+
 module exeunit(
-    input clk,
-    input rst,
-    
-    input[9:0] instype,
-    input[7:0] subtype,
-    
-    input[31:0] rs1data,
-    input[31:0] rs2data,
-    
-    input[4:0] rdaddr,
-    
-    input[31:0] imm,
-    input[31:0] next_pc_out,
-    
-    input instruction1,
-    
-    output reg [31:0] aluout1,//stores Computed Value
-    output reg [31:0] aluout2//stores Destination Address
+input clk,
+input rst,
+input[9:0] instype,
+input[7:0] subtype,
+input[31:0] rs1data,
+input[31:0] rs2data,
+input[4:0] rdaddr,
+input[31:0] imm,
+input[31:0] next_pc_out,
+input instruction1,
+output reg [31:0] aluout1,
+output reg [31:0] aluout2,
+output reg branch
 );
 
 wire [31:0]aluin1 = rs1data;
@@ -102,6 +98,7 @@ always @(posedge clk ) begin
     
     //Branch
     else if(instype[4]) begin
+        branch = ((subtype[0] & EQ) | (subtype[1] & NE) | (subtype[4] & LT) | (subtype[5] & GE) | (subtype[6] & LTU) | (subtype[7] & GEU)); 
         aluout1 = next_pc_out + imm;
         aluout2 = 32'b0;
         rden = 0;
@@ -135,4 +132,5 @@ always @(posedge clk ) begin
         rden = 0;
     end
 end
+
 endmodule

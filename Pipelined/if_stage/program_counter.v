@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 04/02/2023 11:27:55 PM
+// Create Date: 05/24/2023 03:50:12 AM
 // Design Name: 
-// Module Name: hazard_detection
+// Module Name: program_counter
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,8 +20,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module hazard_detection(
-        
-    );
+module program_counter(
+input clk,
+input rst,
+input [31:0] pc_in,
+output [31:0] pc_out,
+);
+
+assign pc_out = (!rst)?(pc_in):0;
 
 endmodule

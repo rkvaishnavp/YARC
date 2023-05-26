@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 04/02/2023 11:27:55 PM
+// Create Date: 05/24/2023 03:52:26 AM
 // Design Name: 
-// Module Name: registers
+// Module Name: registerfile
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -19,41 +19,36 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module registers (
+
+module registerfile(
+
 input clk,
 input rst,
-
+input registers_en,
 input [31:0] instruction,
-
 input [4:0] waddr,
-input [31:0] wdata,
-
-input registers_wen,
-
-output[31:0] rs1data,
-output[31:0] rs2data
+input wen,
+output reg [31:0]rs1data,
+output reg [31:0]rs2data
 );
 
-wire[4:0] rs1addr, rs2addr;
+reg [31:0] registers [0:31];
+
 assign rs1addr = instruction[19:15];
 assign rs2addr = instruction[24:20];
 
-reg [31:0]registers[0:4];
-
-assign rs1data = registers[rs1addr];
-assign rs2data = registers[rs2addr];
-
-always @(posedge clk ) begin
-    if(!rst) begin
-        if(registers_wen) begin
-            registers[waddr] <= wdata;
+always @(posedge clk) begin
+    if(!rst && registers_en) begin
+        if(wen) begin
+            registers[waddr] = wdata;
+        end
+        else begin
+            rs1data = registers[rs1addr];
+            rs2data = registers[rs2addr];
         end
     end
-    else begin
-        for(integer i=0;i<32;i=i+1) begin
-            registers[i] = 0;
-        end
+    else if(rst) begin
+        registers = 0;
     end
 end
-
 endmodule

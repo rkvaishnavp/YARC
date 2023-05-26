@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 04/02/2023 11:27:55 PM
+// Create Date: 05/24/2023 03:52:26 AM
 // Design Name: 
-// Module Name: control
+// Module Name: hazarddetection
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,7 +20,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module control(
-        
+module hazard_detection(
+    input id_ex_memread,
+    input ex_mem_memread,
+    input [4:0]id_ex_rs1,
+    input [4:0]id_ex_rs2,
+    
 );
+
+
 endmodule
