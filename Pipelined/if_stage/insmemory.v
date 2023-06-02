@@ -1,14 +1,12 @@
-module insmemory(instruction, pc_out, clk);
+module insmemory(if_id_instruction, pc_out, clk);
 
-output reg [31:0] instruction;
+output reg [31:0] if_id_instruction;
 input[31:0] pc_out;
 input clk;
 
 reg [31:0]insmemory[0:31];
 always @(posedge clk ) begin
-    if(insmem_pc) begin
-        instruction <= insmemory[pc_out];
-    end
+    if_id_instruction <= insmemory[pc_out];
 end
 
 endmodule

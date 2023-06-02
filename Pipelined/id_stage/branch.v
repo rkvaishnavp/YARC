@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 05/24/2023 03:50:12 AM
+// Create Date: 05/27/2023 01:36:38 AM
 // Design Name: 
-// Module Name: program_counter
+// Module Name: branch
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,12 +20,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module program_counter(
+module branch(
+input clk,
 input rst,
-input [31:0] pc_in,
-output [31:0] pc_out
-);
 
-assign pc_out = (!rst)?(pc_in):0;
-
+input [31:0] if_id_pc_out,
+output [31:0] id_if_pc_in
+    );
+    
+always @(posedge clk) begin
+    
+end
 endmodule

@@ -1,26 +1,26 @@
-module datamemory(rd_data, rd_addr, wr_data, wr_addr, wen, ren, clk);
+module datamemory(
+input clk,
+input rst,
+input [31:0] read_address_aluout1, 
+input [31:0] write_address_aluout1,
+input [31:0] write_data_aluout2,
+input ex_mem_memwrite, 
+input ex_mem_memread,
+output reg [31:0] read_data
+);
 
-output reg [31:0] rd_data;
-input [31:0] rd_addr, wr_addr;
-input [31:0] wr_data;
-input wen, ren;
-input clk;
-input rst;
 
 reg [31:0]datamemory[0:31];
 
 always @(posedge clk ) begin
     if(!rst) begin
-        if(wen) begin
-            datamemory[wr_addr] <= wr_data;
+        if(ex_mem_memwrite) begin
+            datamemory[write_address_aluout1] <= write_data_aluout2;
         end
         
-        if(ren) begin
-            rd_data <= datamemory[rd_addr];
+        else if(ex_mem_memread) begin
+            read_data = datamemory[read_address_aluout1];
         end
-    end
-    else begin
-        datamemory = 0;
     end
 end
 

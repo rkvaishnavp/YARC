@@ -24,31 +24,28 @@ module registerfile(
 
 input clk,
 input rst,
-input registers_en,
-input [31:0] instruction,
-input [4:0] waddr,
-input wen,
+input [31:0] if_id_instruction,
+input [4:0] rd,
+input [31:0] wdata,
+input regwrite,
 output reg [31:0]rs1data,
 output reg [31:0]rs2data
 );
 
 reg [31:0] registers [0:31];
 
-assign rs1addr = instruction[19:15];
-assign rs2addr = instruction[24:20];
+assign rs1addr = if_id_instruction[19:15];
+assign rs2addr = if_id_instruction[24:20];
 
 always @(posedge clk) begin
-    if(!rst && registers_en) begin
-        if(wen) begin
-            registers[waddr] = wdata;
+    if(!rst) begin
+        if(regwrite) begin
+            registers[rd] = wdata;
         end
         else begin
             rs1data = registers[rs1addr];
             rs2data = registers[rs2addr];
         end
-    end
-    else if(rst) begin
-        registers = 0;
     end
 end
 endmodule

@@ -21,8 +21,10 @@
 
 
 module forwarding_unit(
-
-
+input [4:0]id_ex_rs1,
+input [4:0]id_ex_rs2,
+input [4:0]ex_mem_rd,
+input [4:0]mem_wb_rd,
 output reg[1:0] rs1_forward,
 output reg[1:0] rs2_forward
 );
