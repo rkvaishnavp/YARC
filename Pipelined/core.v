@@ -45,22 +45,15 @@ assign exe_ip_2 = (rs2_forward==0)?id_ex_rs2data:(rs2_forward==1)?aluout1:0;
 //  pc_out is address given to memory module
 program_counter program_counter(
     .rst(rst),
+    .hold_pc(hold_pc),
     .pc_in(pc_in),
-    .pc_out(if_pc_out)
+    .pc_out(if_pc_out),
+    .pc_reg_out(if_id_pc_out)
 );
 insmemory insmemory(
     .clk(clk),
     .pc_out(if_pc_out),
     .if_id_instruction(if_id_instruction)
-);
-
-/*  IF/ID Registers  */
-if_id_reg if_id_reg(
-    .clk(clk),
-    .rst(rst),
-    .hold_pc(0),
-    .pc_out(if_pc_out),
-    .if_id_pc_out(if_id_pc_out)
 );
 
 /*  ID Stage  */ 
@@ -187,7 +180,11 @@ mem_wb_reg mem_wb_reg(
 
 
 
-//hazard_detection hazard_detection();
+hazard_detection hazard_detection(
+    .id_ex_rs1(id_ex_rs1),
+    .id_ex_rs2(id_ex_rs2),
+    
+);
 
 forwarding_unit forwarding_unit(
     .id_ex_rs1(id_ex_rs1),

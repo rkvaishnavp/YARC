@@ -22,13 +22,20 @@
 
 module hazard_detection(
     input [31:0] if_id_instruction,
+    
     input id_ex_memread,
-    input ex_mem_memread,
+    
     input [4:0]id_ex_rs1,
     input [4:0]id_ex_rs2,
-    output holdpc
+    input [4:0]id_ex_rd,
+    
+    output holdpc,
+    output pc_write
     
 );
 
+always @(*) begin
+    
+end
 
 endmodule
