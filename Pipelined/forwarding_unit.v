@@ -29,6 +29,11 @@ output reg[1:0] rs1_forward,
 output reg[1:0] rs2_forward
 );
 
+initial begin
+    rs1_forward = 0;
+    rs2_forward = 0;
+end
+
 always @(*) begin
     
     if(ex_mem_rd == id_ex_rs1) begin

@@ -32,7 +32,16 @@ output reg [31:0]rs1data,
 output reg [31:0]rs2data
 );
 
+
 reg [31:0] registers [0:31];
+
+initial begin
+    registers[0] = 32'b100;
+    registers[1] = 32'b001;
+    registers[2] = 32'b000;
+    registers[3] = 32'b111;
+    registers[4] = 32'b101;
+end
 
 assign rs1addr = if_id_instruction[19:15];
 assign rs2addr = if_id_instruction[24:20];

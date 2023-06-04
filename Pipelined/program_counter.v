@@ -23,31 +23,28 @@
 module program_counter(
 input clk,
 input rst,
-input hold_pc,
-input pc_write,
+input holdpc,
 input [31:0] pc_in,
 output [31:0] pc_out,
 output reg [31:0] pc_reg_out
 );
 
-assign pc_out = pc_reg_out;
+reg [31:0] pc = 0;
+
+assign pc_out[31:0] = pc;
 
 always @(posedge clk) begin
     if(!rst) begin
-        if(!pc_write) begin
-            if(!hold_pc) begin
-                pc_reg_out = pc_reg_out + 1;
-            end
-            else begin
-                pc_reg_out = pc_reg_out;
-            end
+        if(!holdpc) begin
+            pc = pc + 1;
         end
         else begin
-            pc_reg_out = pc_in;
+            pc = pc;
         end
+        pc_reg_out = pc;
     end
     else begin
-        pc_reg_out = 0;
+        pc = 0;
     end
 end
 endmodule

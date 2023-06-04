@@ -24,54 +24,54 @@ module core(
 
 input clk,
 input rst
-
 );
 
-wire [31:0]if_id_instruction;   //32-bit instruction from IF to ID stage
-assign if_id_instruction1 = if_id_instruction[30];  //[30] bit of instruction for ADD,SUB
-
-
-wire[31:0] if_pc_out; //between PC and Instruction memory
-
-wire hold_pc;
-wire exe_ip_1;
-wire exe_ip_2;
-
-assign exe_ip_1 = (rs1_forward==0)?id_ex_rs1data:(rs1_forward==1)?aluout1:0;
-assign exe_ip_2 = (rs2_forward==0)?id_ex_rs2data:(rs2_forward==1)?aluout1:0;
-
-/*  IF Stage  */
-//  Instruction to be loaded from BlockRam AXI4-Lite Interface
-//  pc_out is address given to memory module
+wire [31:0]pc_out;
+wire [31:0]pc_in;
+wire [31:0]if_id_pc_out;
 program_counter program_counter(
+    .clk(clk),
     .rst(rst),
-    .hold_pc(hold_pc),
+    .holdpc(holdpc),
     .pc_in(pc_in),
-    .pc_out(if_pc_out),
+    .pc_out(pc_out),
     .pc_reg_out(if_id_pc_out)
 );
+
+wire [31:0]if_id_instruction;
 insmemory insmemory(
     .clk(clk),
-    .pc_out(if_pc_out),
+    .pc_out(pc_out),
     .if_id_instruction(if_id_instruction)
 );
 
-/*  ID Stage  */ 
-//  Nothing else to add in this stage
+wire [31:0]wdata;
+assign wdata = (mem_wb_mem_to_reg==1)?read_data:mem_wb_aluout1;
+wire [31:0]id_ex_rs1data;
+wire [31:0]id_ex_rs2data;
+wire [4:0]mem_wb_rd;
 registerfile registerfile(
     .clk(clk),
     .rst(rst),
     .if_id_instruction(if_id_instruction),
-    .rd(read_data),
-    .regwrite(regwrite),
+    .rd(mem_wb_rd),
+    .wdata(wdata),
+    .regwrite(mem_wb_regwrite),
     .rs1data(id_ex_rs1data),
     .rs2data(id_ex_rs2data)
 );
+
+wire [31:0]id_ex_imm;
 immmaker immmaker(
     .clk(clk),
     .instruction(if_id_instruction),
     .imm(id_ex_imm)
 );
+
+wire id_ex_mem_to_reg;
+wire [8:0]id_ex_instype;
+wire [7:0]id_ex_subtype;
+wire [4:0]id_ex_rd;
 control control(
     .clk(clk),
     .rst(rst),
@@ -88,7 +88,9 @@ control control(
     .id_ex_subtype(id_ex_subtype)
 );
 
-/*  ID/EXE Stage  */
+wire [4:0]id_ex_rs1;
+wire [4:0]id_ex_rs2;
+wire [31:0]id_ex_pc_out;
 id_ex_reg id_ex_reg(
     .clk(clk),
     .rst(rst),
@@ -96,13 +98,16 @@ id_ex_reg id_ex_reg(
     .if_id_pc_out(if_id_pc_out),
     .id_ex_rs1(id_ex_rs1),
     .id_ex_rs2(id_ex_rs2),
-    .id_ex_rd(id_ex_rs2),
+    .id_ex_rd(),
     .id_ex_pc_out(id_ex_pc_out)
 );
 
-
-/*  EXE Stage  */
-//  Have to add mux for Forwarding the Data and Control Hazards
+wire [31:0]exe_ip_1;
+assign exe_ip_1 = (rs1_forward==0)?id_ex_rs1data:(rs1_forward==1)?aluout1:(rs1_forward==2)?mem_wb_aluout1:32'b0;
+wire [31:0]exe_ip_2;
+assign exe_ip_2 = (rs2_forward==0)?id_ex_rs2data:(rs2_forward==1)?aluout1:(rs2_forward==2)?mem_wb_aluout1:32'b0;
+wire [31:0]aluout1;
+wire [31:0]aluotu2;
 exeunit exeunit(
     .clk(clk),
     .rst(rst),
@@ -113,13 +118,15 @@ exeunit exeunit(
     .id_ex_rd(id_ex_rd),
     .id_ex_imm(id_ex_imm),
     .id_ex_pc_out(id_ex_pc_out),
-    .id_ex_instruction1(instruction1),
+    .id_ex_instruction1(id_ex_instruction1),
     .aluout1(aluout1),
     .aluout2(aluout2)
 );
 
-
-/*  EXE/MEM Stage  */
+wire [31:0]ex_mem_pc_src;
+wire [4:0]ex_mem_rd;
+wire [4:0]ex_mem_rs1;
+wire [4:0]ex_mem_rs2;
 ex_mem_reg ex_mem_reg(
     .clk(clk),
     .rst(rst),
@@ -141,11 +148,7 @@ ex_mem_reg ex_mem_reg(
     .ex_mem_rs2(ex_mem_rs2)
 );
 
-
-/*  MEM Stage  */
-//  Write Back is done in this stage also and will save 1 cycle of wastage
-//  AXI4-Lite Memory Interface
-//  Have to add Support for AXI4-Lite Interface (READ/WRITE)
+wire [31:0]read_data;
 datamemory datamemory(
     .clk(clk),
     .rst(rst),
@@ -157,33 +160,34 @@ datamemory datamemory(
     .read_data(read_data)
 );
 
-/*  MEM/WB Stage  */
+wire [4:0]mem_wb_rs1;
+wire [4:0]mem_wb_rs2;
+wire [4:0]mem_wb_rd;
 mem_wb_reg mem_wb_reg(
     .clk(clk),
     .rst(rst),
     .ex_mem_rs1(ex_mem_rs1),
     .ex_mem_rs2(ex_mem_rs2),
-    .ex_mem_rd(ex_mem_rs2),
+    .ex_mem_rd(ex_mem_rd),
     .mem_wb_rs1(mem_wb_rs1),
     .mem_wb_rs2(mem_wb_rs2),
-    .mem_wb_rd(mem_wb_rd)
+    .mem_wb_rd(mem_wb_rd),
+    .mem_wb_mem_to_reg(mem_wb_mem_to_reg),
+    .mem_wb_regwrite(mem_wb_regwrite),
+    .aluout1(aluout1),
+    .aluout2(aluout2),
+    .mem_wb_aluout1(mem_wb_aluout1),
+    .mem_wb_aluout2(mem_wb_aluout2)
 );
 
-
-/*  WB Stage  */
-// Write Back happens in this stage
-
-
-
-//  Write will be directly done from AXI4-Lite Memory
-//  Have to add Forwarding support as well
-
-
-
 hazard_detection hazard_detection(
+    .if_id_instruction(if_id_instruction),
+    .id_ex_memread(id_ex_memread),
+    .mem_wb_regwrite(mem_wb_regwrite),
     .id_ex_rs1(id_ex_rs1),
     .id_ex_rs2(id_ex_rs2),
-    
+    .id_ex_rd(id_ex_rd),
+    .holdpc(holdpc)
 );
 
 forwarding_unit forwarding_unit(
