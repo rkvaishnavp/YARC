@@ -26,7 +26,8 @@ input rst,
 input holdpc,
 input [31:0] pc_in,
 output [31:0] pc_out,
-output reg [31:0] pc_reg_out
+output reg [31:0] pc_reg_out,
+output reg if_id_ins_valid
 );
 
 reg [31:0] pc = 0;
@@ -37,13 +38,16 @@ always @(posedge clk) begin
     if(!rst) begin
         if(!holdpc) begin
             pc = pc + 1;
+            if_id_ins_valid = 1;
         end
         else begin
             pc = pc;
+            if_id_ins_valid = 0;
         end
         pc_reg_out = pc;
     end
     else begin
+        if_id_ins_valid = 0;
         pc = 0;
     end
 end

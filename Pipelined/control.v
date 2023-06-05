@@ -26,7 +26,6 @@ input rst,
 
 input [31:0]if_id_instruction,
 
-
 output reg id_ex_memread,
 output reg id_ex_memwrite,
 output reg id_ex_mem_to_reg,

@@ -21,40 +21,40 @@
 
 
 module forwarding_unit(
+input clk,
+input rst,
 input [4:0]id_ex_rs1,
 input [4:0]id_ex_rs2,
 input [4:0]ex_mem_rd,
 input [4:0]mem_wb_rd,
-output reg[1:0] rs1_forward,
-output reg[1:0] rs2_forward
+input ex_mem_ins_valid,
+input mem_wb_ins_valid,
+output reg [1:0] rs1_forward,
+output reg [1:0] rs2_forward
 );
 
-initial begin
-    rs1_forward = 0;
-    rs2_forward = 0;
-end
 
-always @(*) begin
+always @(posedge clk) begin
+    if(!rst) begin
+        {rs1_forward,rs2_forward} = 0;
+        
+        if(ex_mem_ins_valid && ex_mem_rd == id_ex_rs1) begin
+            rs1_forward = 2'b01;
+        end
+        else if(mem_wb_ins_valid && mem_wb_rd == id_ex_rs1) begin
+            rs1_forward = 2'b10;
+        end
     
-    if(ex_mem_rd == id_ex_rs1) begin
-        rs1_forward = 2'b01;
-    end
-    else if(mem_wb_rd == id_ex_rs1) begin
-        rs1_forward = 2'b10;
-    end
-    else begin
-        rs1_forward = 2'b00;
-    end
-
-    if(ex_mem_rd == id_ex_rs2) begin
-        rs2_forward = 2'b01;
-    end
-    else if(mem_wb_rd == id_ex_rs2) begin
-        rs2_forward = 2'b10;
+        if(ex_mem_ins_valid && ex_mem_rd == id_ex_rs2) begin
+            rs2_forward = 2'b01;
+        end
+        else if(mem_wb_ins_valid && mem_wb_rd == id_ex_rs2) begin
+            rs2_forward = 2'b10;
+        end
     end
     else begin
-        rs2_forward = 2'b00;
+        rs1_forward = 2'b11;
+        rs2_forward = 2'b11;
     end
-
 end
 endmodule

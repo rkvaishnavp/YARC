@@ -35,7 +35,8 @@ program_counter program_counter(
     .holdpc(holdpc),
     .pc_in(pc_in),
     .pc_out(pc_out),
-    .pc_reg_out(if_id_pc_out)
+    .pc_reg_out(if_id_pc_out),
+    .if_id_ins_valid(if_id_ins_valid)
 );
 
 wire [31:0]if_id_instruction;
@@ -99,7 +100,9 @@ id_ex_reg id_ex_reg(
     .id_ex_rs1(id_ex_rs1),
     .id_ex_rs2(id_ex_rs2),
     .id_ex_rd(),
-    .id_ex_pc_out(id_ex_pc_out)
+    .id_ex_pc_out(id_ex_pc_out),
+    .if_id_ins_valid(if_id_ins_valid),
+    .id_ex_ins_valid(id_ex_ins_valid)
 );
 
 wire [31:0]exe_ip_1;
@@ -145,7 +148,9 @@ ex_mem_reg ex_mem_reg(
     .id_ex_rs1(id_ex_rs1),
     .id_ex_rs2(id_ex_rs2),
     .ex_mem_rs1(ex_mem_rs1),
-    .ex_mem_rs2(ex_mem_rs2)
+    .ex_mem_rs2(ex_mem_rs2),
+    .id_ex_ins_valid(id_ex_ins_valid),
+    .ex_mem_ins_valid(ex_mem_ins_valid)
 );
 
 wire [31:0]read_data;
@@ -177,7 +182,9 @@ mem_wb_reg mem_wb_reg(
     .aluout1(aluout1),
     .aluout2(aluout2),
     .mem_wb_aluout1(mem_wb_aluout1),
-    .mem_wb_aluout2(mem_wb_aluout2)
+    .mem_wb_aluout2(mem_wb_aluout2),
+    .ex_mem_ins_valid(ex_mem_ins_valid),
+    .mem_wb_ins_valid(mem_wb_ins_valid)
 );
 
 hazard_detection hazard_detection(
@@ -191,6 +198,8 @@ hazard_detection hazard_detection(
 );
 
 forwarding_unit forwarding_unit(
+    .rst(rst),
+    .clk(clk),
     .id_ex_rs1(id_ex_rs1),
     .id_ex_rs2(id_ex_rs2),
     .ex_mem_rd(ex_mem_rd),

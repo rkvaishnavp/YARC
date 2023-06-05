@@ -49,11 +49,11 @@ end
 
 always @(*) begin
     if(!rst) begin
-        if(jump_condition) begin
+        if(jump_condition || mem_wb_regwrite) begin
             holdpc = 1;
         end
-        else if(mem_wb_regwrite) begin
-            holdpc = 1;
+        else begin
+            holdpc = 0;
         end
     end
     else begin
