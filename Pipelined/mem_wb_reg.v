@@ -21,16 +21,6 @@ module mem_wb_reg(
     output reg mem_wb_ins_valid
 );
 
-initial begin
-    mem_wb_rs1 = 0;
-    mem_wb_rs2 = 0;
-    mem_wb_rd = 0;
-    mem_wb_mem_to_reg = 0;
-    mem_wb_regwrite = 0;
-    mem_wb_aluout1 = 0;
-    mem_wb_aluout2 = 0;        
-end
-
 always @(posedge clk ) begin
     if(!rst) begin
         mem_wb_rs1 = ex_mem_rs1;

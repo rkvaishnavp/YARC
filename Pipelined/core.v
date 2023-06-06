@@ -32,7 +32,6 @@ wire [31:0]if_id_pc_out;
 program_counter program_counter(
     .clk(clk),
     .rst(rst),
-    .holdpc(holdpc),
     .pc_in(pc_in),
     .pc_out(pc_out),
     .pc_reg_out(if_id_pc_out),
@@ -105,19 +104,15 @@ id_ex_reg id_ex_reg(
     .id_ex_ins_valid(id_ex_ins_valid)
 );
 
-wire [31:0]exe_ip_1;
-assign exe_ip_1 = (rs1_forward==0)?id_ex_rs1data:(rs1_forward==1)?aluout1:(rs1_forward==2)?mem_wb_aluout1:32'b0;
-wire [31:0]exe_ip_2;
-assign exe_ip_2 = (rs2_forward==0)?id_ex_rs2data:(rs2_forward==1)?aluout1:(rs2_forward==2)?mem_wb_aluout1:32'b0;
 wire [31:0]aluout1;
-wire [31:0]aluotu2;
+wire [31:0]aluout2;
 exeunit exeunit(
     .clk(clk),
     .rst(rst),
     .id_ex_instype(id_ex_instype),
     .id_ex_subtype(id_ex_subtype),
-    .id_ex_rs1data(exe_ip_1),
-    .id_ex_rs2data(exe_ip_2),
+    .id_ex_rs1data(id_ex_rs1data),
+    .id_ex_rs2data(id_ex_rs2data),
     .id_ex_rd(id_ex_rd),
     .id_ex_imm(id_ex_imm),
     .id_ex_pc_out(id_ex_pc_out),
@@ -167,13 +162,16 @@ datamemory datamemory(
 
 wire [4:0]mem_wb_rs1;
 wire [4:0]mem_wb_rs2;
-wire [4:0]mem_wb_rd;
+wire [31:0]mem_wb_aluout1;
+wire [31:0]mem_wb_aluout2;
 mem_wb_reg mem_wb_reg(
     .clk(clk),
     .rst(rst),
     .ex_mem_rs1(ex_mem_rs1),
     .ex_mem_rs2(ex_mem_rs2),
     .ex_mem_rd(ex_mem_rd),
+    .ex_mem_regwrite(ex_mem_regwrite),
+    .ex_mem_mem_to_reg(ex_mem_mem_to_reg),
     .mem_wb_rs1(mem_wb_rs1),
     .mem_wb_rs2(mem_wb_rs2),
     .mem_wb_rd(mem_wb_rd),
@@ -186,26 +184,4 @@ mem_wb_reg mem_wb_reg(
     .ex_mem_ins_valid(ex_mem_ins_valid),
     .mem_wb_ins_valid(mem_wb_ins_valid)
 );
-
-hazard_detection hazard_detection(
-    .if_id_instruction(if_id_instruction),
-    .id_ex_memread(id_ex_memread),
-    .mem_wb_regwrite(mem_wb_regwrite),
-    .id_ex_rs1(id_ex_rs1),
-    .id_ex_rs2(id_ex_rs2),
-    .id_ex_rd(id_ex_rd),
-    .holdpc(holdpc)
-);
-
-forwarding_unit forwarding_unit(
-    .rst(rst),
-    .clk(clk),
-    .id_ex_rs1(id_ex_rs1),
-    .id_ex_rs2(id_ex_rs2),
-    .ex_mem_rd(ex_mem_rd),
-    .mem_wb_rd(mem_wb_rd),
-    .rs1_forward(rs1_forward),
-    .rs2_forward(rs2_forward)
-);
-
 endmodule
